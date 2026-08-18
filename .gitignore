@@ -1,1 +1,18 @@
+# Maven build files
 target/
+
+# Java compiled files
+*.class
+
+# Log files
+*.log
+
+# Java archive files
+*.jar
+*.war
+*.nar
+*.ear
+
+# Java crash logs
+hs_err_pid*
+replay_pid*
