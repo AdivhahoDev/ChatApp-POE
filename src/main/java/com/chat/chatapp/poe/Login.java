@@ -47,7 +47,6 @@ public class Login {
         boolean hasNumber = false;
         boolean hasSpecial = false;
 
-        // Check each character in the password.
         for (char character : password.toCharArray()) {
 
             if (Character.isUpperCase(character)) {
@@ -70,10 +69,10 @@ public class Login {
      * Checks if a South African cell phone number is valid.
      *
      * Required format:
-     * +27 followed by exactly 10 digits.
+     * +27 followed by exactly 9 digits.
      *
      * Regex pattern:
-     * ^\+27\d{10}$
+     * ^\+27\d{9}$
      *
      * The regex syntax was learned from Oracle's Java
      * Regular Expressions documentation:
@@ -88,7 +87,7 @@ public class Login {
             return false;
         }
 
-        String regex = "^\\+27\\d{10}$";
+        String regex = "^\\+27\\d{9}$";
 
         return phoneNumber.matches(regex);
     }
@@ -105,24 +104,21 @@ public class Login {
                                String password,
                                String phoneNumber) {
 
-        // Check the username first.
         if (!checkUserName(username)) {
             return "Username is not correctly formatted; please ensure "
                     + "that your username contains an underscore and is "
                     + "no more than five characters in length.";
         }
 
-        // Check the password.
         if (!checkPasswordComplexity(password)) {
             return "Password is not correctly formatted; please ensure "
                     + "that the password contains at least eight characters, "
                     + "a capital letter, a number, and a special character.";
         }
 
-        // Check the cell phone number.
         if (!checkCellPhoneNumber(phoneNumber)) {
             return "Cell number is not correctly formatted; please ensure "
-                    + "that it starts with +27 and is followed by 10 digits.";
+                    + "that it starts with +27 and is followed by 9 digits.";
         }
 
         return "Username successfully captured.\n"
