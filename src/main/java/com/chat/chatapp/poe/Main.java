@@ -2,6 +2,12 @@ package com.chat.chatapp.poe;
 
 import java.util.Scanner;
 
+/**
+ * Main class for the Chat App.
+ *
+ * This class provides the console menu for
+ * user registration and login.
+ */
 public class Main {
 
     public static void main(String[] args) {
