@@ -2,6 +2,9 @@ package com.chat.chatapp.poe;
 
 /**
  * Login class for the Chat App registration and login system.
+ *
+ * This class handles user registration, validation,
+ * login authentication, and login status messages.
  */
 public class Login {
 
@@ -60,7 +63,6 @@ public class Login {
             }
         }
 
-        // The password is valid only if all requirements are met.
         return hasCapital && hasNumber && hasSpecial;
     }
 
@@ -71,7 +73,7 @@ public class Login {
      * +27 followed by exactly 10 digits.
      *
      * Regex pattern:
-     * ^\\+27\\d{10}$
+     * ^\+27\d{10}$
      *
      * The regex syntax was learned from Oracle's Java
      * Regular Expressions documentation:
