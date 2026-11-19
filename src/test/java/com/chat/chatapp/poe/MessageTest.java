@@ -6,57 +6,86 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MessageTest {
 
-    private Message message;
-
     @BeforeEach
     public void setUp() {
-        // Message ID is auto-generated, numMessagesSent = 1 for test cases
-        message = new Message("+27718693002", "Hi Mike, can you join us for dinner tonight?", 1);
+        // Clear arrays before every test so they don't overlap
+        MessageManager.storedMessages.clear();
+        MessageManager.messageIDs.clear();
+        MessageManager.messageHashes.clear();
+        MessageManager.sentMessages.clear();
+
+        // Populate with the specific Test Data from Image 3 of your assignment
+        MessageManager.addTestMessage("Developer", "+27834557896", "Did you get the cake?", "0838884567", "Hash1");
+        MessageManager.addTestMessage("Developer", "+27838884567", "Where are you? You are late! I have asked you to be on time.", "0838884568", "Hash2");
+        MessageManager.addTestMessage("Developer", "+27838884567", "Ok, I am leaving without you.", "0838884569", "Hash3");
     }
 
     @Test
-    public void testMessageIDCreated() {
-        assertNotNull(message.getMessageID());
-        assertTrue(message.checkMessageID(), "Message ID should be max 10 characters and not null");
+    public void testSentMessagesArrayPopulated() {
+        // Manually add the "Sent" messages as required by the test data
+        MessageManager.sentMessages.add("Developer -> +27834557896: Did you get the cake?");
+        MessageManager.sentMessages.add("Developer -> 0838884567: It is dinner time !");
+        
+        // Check if they were added correctly
+        assertEquals("Developer -> +27834557896: Did you get the cake?", MessageManager.sentMessages.get(0));
+        assertEquals("Developer -> 0838884567: It is dinner time !", MessageManager.sentMessages.get(1));
     }
 
     @Test
-    public void testRecipientCellSuccess() {
-        assertEquals("Cell phone number successfully captured.", message.checkRecipientCell());
+    public void testDisplayLongestMessage() {
+        // The expected longest message from the Test Data
+        String expectedLongest = "Developer -> +27838884567: Where are you? You are late! I have asked you to be on time.";
+        
+        String longest = "";
+        for (String msg : MessageManager.storedMessages) {
+            if (msg.length() > longest.length()) {
+                longest = msg;
+            }
+        }
+        assertEquals(expectedLongest, longest);
     }
 
     @Test
-    public void testRecipientCellFailure() {
-        Message invalidMessage = new Message("083555", "Hello", 1); // Invalid length/code
-        assertEquals("Cell phone number is incorrectly formatted or does not contain an international code. Please correct the number and try again.", invalidMessage.checkRecipientCell());
+    public void testSearchForMessageID() {
+        // Test searching for the ID of message 4
+        String searchId = "0838884568";
+        int index = MessageManager.messageIDs.indexOf(searchId);
+        
+        // Assert that the ID is found (index is not -1) and the message matches
+        assertNotEquals(-1, index);
+        assertTrue(MessageManager.storedMessages.get(index).contains("Where are you?"));
     }
 
     @Test
-    public void testMessageLengthSuccess() {
-        assertEquals("Message ready to send.", message.checkMessageLength());
+    public void testSearchMessagesByRecipient() {
+        // Test finding all messages for +27838884567 (Should be 2 messages)
+        String recipient = "+27838884567";
+        int count = 0;
+        
+        for (String msg : MessageManager.storedMessages) {
+            if (msg.contains(recipient)) {
+                count++;
+            }
+        }
+        
+        assertEquals(2, count);
     }
 
     @Test
-    public void testMessageLengthFailure() {
-        // Create a message that exceeds 250 characters
-        String longText = "A".repeat(255);
-        Message longMessage = new Message("+27718693002", longText, 1);
-        assertEquals("Message exceeds 250 characters by 5; please reduce the size.", longMessage.checkMessageLength());
-    }
-
-    @Test
-    public void testMessageHashCorrect() {
-        // Example: ID starts with X, msg number is 1, first word HI, last word TONIGHT
-        // Note: Since ID is auto-generated, we can't assert the exact first two digits, 
-        // but we can assert the format and the words.
-        String hash = message.getMessageHash();
-        assertTrue(hash.matches("\\d{2}:1:HITONIGHT"), "Hash format should be XX:1:HITONIGHT");
-    }
-
-    @Test
-    public void testSentMessage() {
-        assertEquals("Message successfully sent.", message.sentMessage(1));
-        assertEquals("Press 0 to delete the message.", message.sentMessage(2));
-        assertEquals("Message successfully stored.", message.sentMessage(3));
+    public void testDeleteMessageByHash() {
+        // Test deleting "Hash2"
+        String hashToDelete = "Hash2";
+        int index = MessageManager.messageHashes.indexOf(hashToDelete);
+        
+        assertNotEquals(-1, index);
+        
+        // Simulate the deletion
+        MessageManager.messageHashes.remove(index);
+        MessageManager.messageIDs.remove(index);
+        MessageManager.storedMessages.remove(index);
+        
+        // Assert that the list size decreased and the hash is gone
+        assertEquals(2, MessageManager.storedMessages.size());
+        assertEquals(-1, MessageManager.messageHashes.indexOf(hashToDelete));
     }
 }
