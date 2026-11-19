@@ -43,7 +43,7 @@ public class Main {
                     String newUsername = scanner.nextLine();
                     System.out.print("Enter your password: ");
                     String newPassword = scanner.nextLine();
-                    System.out.print("Enter your phone number: ");
+                    System.out.print("Enter your phone number (+27...): ");
                     String phoneNumber = scanner.nextLine();
 
                     String registrationMessage = login.registerUser(newUsername, newPassword, phoneNumber);
@@ -72,12 +72,10 @@ public class Main {
                     boolean isLoggedIn = login.loginUser(enteredUsername, enteredPassword, storedUsername, storedPassword);
                     System.out.println(login.returnLoginStatus(isLoggedIn, firstName, lastName));
 
-                    // --- THIS IS THE NEW PART ---
                     // If login is successful, start the QuickChat menu!
                     if (isLoggedIn) {
-                        startQuickChatMenu(scanner);
+                        startQuickChatMenu(scanner, firstName); // We pass the firstName here
                     }
-                    // ----------------------------
                     break;
 
                 case "3":
@@ -93,18 +91,22 @@ public class Main {
     }
 
     // ==========================================
-    // THIS IS THE NEW PART 2 MENU
+    // UPDATED PART 2 & 3 MENU
     // ==========================================
-    public static void startQuickChatMenu(Scanner scanner) {
+    public static void startQuickChatMenu(Scanner scanner, String loggedInUser) {
         int numMessages = 0;
         boolean running = true;
+        
+        // Set the current user in MessageManager so we know who the "Sender" is
+        MessageManager.currentUser = loggedInUser;
 
         System.out.println("\nWelcome to QuickChat.");
         
         while (running) {
             System.out.println("\n1) Send Messages");
             System.out.println("2) Show recently sent messages");
-            System.out.println("3) Quit");
+            System.out.println("3) Stored Messages (Part 3)"); // <-- NEW PART 3 OPTION
+            System.out.println("4) Quit");                    
             System.out.print("Choose an option: ");
             
             String choice = scanner.nextLine();
@@ -157,11 +159,18 @@ public class Main {
                     System.out.print("Choice: ");
                     int action = Integer.parseInt(scanner.nextLine());
                     System.out.println(newMessage.sentMessage(action));
+                    
+                    // --- NEW PART 3 INTEGRATION ---
+                    // Save it to our arrays using the MessageManager!
+                    MessageManager.addMessage(recipient, text, newMessage.getMessageID(), newMessage.getMessageHash(), action);
                 }
                 
             } else if (choice.equals("2")) {
                 System.out.println("Coming Soon.");
-            } else if (choice.equals("3")) {
+            } else if (choice.equals("3")) { 
+                // --- OPEN PART 3 MENU ---
+                MessageManager.showStoredMessagesMenu(scanner);
+            } else if (choice.equals("4")) { 
                 running = false;
                 System.out.println("Total messages sent: " + Message.returnTotalMessages());
                 Message.printMessages();
@@ -171,4 +180,4 @@ public class Main {
             }
         }
     }
-}
+} 
